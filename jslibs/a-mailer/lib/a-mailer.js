@@ -219,12 +219,19 @@ function composeMsg(addrInfo, sendData, textContentSubtype) {
     var i;              // Loop var
 
     // Create the mime multi part
-    mimeMultipart = new MimeMultipart();
+    mimeMultipart = new MimeMultipart('alternative');
 
-    // Create the text body part and add it to the multi part
+	// Create the text body part and add it to the multi part
+	// Plain Always
     textBodyPart = new MimeBodyPart();
-    textBodyPart.setText(sendData.body || '', 'utf-8', textContentSubtype);
+    textBodyPart.setText(sendData.body, 'utf-8', 'text/plain');
     mimeMultipart.addBodyPart(textBodyPart);
+
+    if( sendData.hasOwnProperty('html') ) {
+    	textBodyPart = new MimeBodyPart();
+    	textBodyPart.setText(sendData.html, 'utf-8', 'text/html');
+    	mimeMultipart.addBodyPart(textBodyPart);
+    }
 
     // Create the attachment body parts and add them to the multi part
     if (sendData.attachments && sendData.attachments.length > 0) {
